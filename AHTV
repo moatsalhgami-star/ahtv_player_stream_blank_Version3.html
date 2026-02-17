@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مشغل AHTV للبث المباشر</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Video.js CSS -->
+  <link href="https://vjs.zencdn.net/8.8.0/video-js.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/videojs-seek-buttons/dist/videojs-seek-buttons.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/@videojs/themes@1/dist/forest/index.css" rel="stylesheet" />
+  <style>
+    body { margin:0; background:#101114; font-family:'Tajawal', Arial,sans-serif; color: #fff;text-align:center;}
+    .header {background:#232526;padding:20px 0 16px 0;font-size:1.7rem;font-weight:700;letter-spacing:1.5px;color:#ff3c00;}
+    .input-wrap {margin:20px auto 8px auto;max-width:430px;background:#191919;border-radius:13px;padding:23px 8px;box-shadow:0 4px 24px #000c;}
+    input[type='text'] {width:70%;padding:12px 8px;border-radius:9px 0 0 9px;border:none;background:#14191a;color:#fff;font-size:1.01rem;}
+    button {padding:13px 19px;background:#ff3c00;color:white;font-weight:700;font-size:1.1em;border:none;border-radius:0 10px 10px 0;margin-right:-4px;cursor:pointer;letter-spacing:1px;}
+    button:hover {background:#ff1f1f;}
+    .video-js {margin:18px auto;background:#000;border-radius:20px;box-shadow:0 7px 28px #000c;}
+    .ahtv-name {
+      margin:0 auto 22px auto;
+      font-size:1.37em;
+      font-weight:700;
+      letter-spacing:1.1px;
+      color:#ff3c00;
+      background:rgba(22,26,30,0.07);
+      border-radius:11px;
+      width:fit-content;padding:8px 26px;
+      box-shadow:0 3px 18px #0001;
+      font-family:'Tajawal',Arial,sans-serif;
+    }
+    @media (max-width:640px){
+      .video-js {width:97vw;max-width:99vw;}
+      .input-wrap{padding:13px 1px;}
+      .header{font-size:1rem;}
+      .ahtv-name{font-size:1.05em;padding:6px 17px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="header">مشغل بث مباشر</div>
+  <form class="input-wrap" onsubmit="playVideo();return false;">
+    <input type="text" id="streamUrl" placeholder="أدخل رابط بث M3U8 أو فيديو MP4" dir="ltr" autocomplete="off" />
+    <button type="submit">تشغيل</button>
+  </form>
+  <div style="width:92vw;max-width:820px;margin:0 auto;">
+    <video id="my-player" class="video-js vjs-theme-forest vjs-big-play-centered" controls preload="auto" width="100%" height="365"
+      data-setup='{ "fluid": true, "nativeControlsForTouch": false }'></video>
+    <div class="ahtv-name">AHTV</div>
+  </div>
+  <script src="https://vjs.zencdn.net/8.8.0/video.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons/dist/videojs-seek-buttons.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.js"></script>
+  <script>
+    var player = videojs('my-player');
+    player.seekButtons({ forward: 10, back: 10 });
+
+    // Helper: request fullscreen
+    function openFullscreen(videoElem) {
+      if (videoElem.requestFullscreen) videoElem.requestFullscreen();
+      else if (videoElem.webkitRequestFullscreen) videoElem.webkitRequestFullscreen();
+      else if (videoElem.msRequestFullscreen) videoElem.msRequestFullscreen();
+    }
+
+    window.playVideo = function(){
+      var url = document.getElementById('streamUrl').value.trim();
+      if(!url) return alert('يرجى إدخال الرابط!');
+      player.pause(); player.reset();
+      player.src({src: url, type: url.includes('m3u8') ? 'application/x-mpegURL' : 'video/mp4'});
+      player.play();
+      setTimeout(function(){
+        openFullscreen(document.getElementById('my-player'));
+      }, 1200);
+    };
+
+    document.getElementById('streamUrl').addEventListener('keydown',function(e){
+      if(e.key==='Enter'){e.preventDefault();playVideo();}
+    });
+
+    // Remove auto play and auto fullscreen: Only triggered when user clicks "تشغيل"
+  </script>
+</body>
+</html>
